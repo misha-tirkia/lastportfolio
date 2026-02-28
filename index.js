@@ -8,6 +8,17 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(express.static('public'))
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// მთავარი გვერდის ჩატვირთვა
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log('ბაზასთან კავშირი დამყარდა')
@@ -43,5 +54,6 @@ app.post('/', async (req, res) => {
 }) 
 
 const port = process.env.PORT || 3000;
+
 
 app.listen(port, () => console.log(`სერვერი ჩაირთო ${port} პორტზე`))
