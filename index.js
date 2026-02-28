@@ -14,7 +14,10 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// მთავარი გვერდის ჩატვირთვა
+// ნაცვლად უბრალო app.use(express.static('public')), დაწერე ეს:
+app.use(express.static(path.join(__dirname, 'public')));
+
+// დარწმუნდი, რომ მთავარი გვერდის როუტიც ასეთია:
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -57,3 +60,4 @@ const port = process.env.PORT || 3000;
 
 
 app.listen(port, () => console.log(`სერვერი ჩაირთო ${port} პორტზე`))
+
