@@ -41,23 +41,35 @@ const contact = mongoose.model('contact', Contact)
 
 app.post('/', async (req, res) => {
     try {
-        const {name, email, subject, message} = req.body
+        // 1. ყოველი შემთხვევისთვის შევამოწმოთ, კავშირი თუ გვაქვს. 
+        // თუ არა - დაველოდოთ დაკავშირებას.
+        if (mongoose.connection.readyState !== 1) {
+            await mongoose.connect(process.env.MONGO_URI);
+        }
+
+        const { name, email, subject, message } = req.body;
+        
         const newmessage = new contact({
-            name: name,
-            email: email,
-            subject: subject,
-            message: message
-        })
-        await newmessage.save()
-        console.log('გაგზავნილია')
-        res.redirect('/')
+            name,
+            email,
+            subject,
+            message
+        });
+
+        await newmessage.save();
+        console.log('მონაცემები წარმატებით შეინახა ✅');
+        res.redirect('/');
+        
     } catch (err) {
-        res.status(500).send('შეცდომაა')
+        // ეს კონსოლში დაგიწერს ზუსტ მიზეზს (Vercel Logs-ში გამოჩნდება)
+        console.error("დეტალური შეცდომა:", err); 
+        res.status(500).send('ბაზაში შენახვა ვერ მოხერხდა: ' + err.message);
     }
-}) 
+});
 
 const port = process.env.PORT || 3000;
 
 
 app.listen(port, () => console.log(`სერვერი ჩაირთო ${port} პორტზე`))
+
 
